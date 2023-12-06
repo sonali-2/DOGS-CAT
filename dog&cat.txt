@@ -1,0 +1,42 @@
+import pandas as pd
+
+data = pd.read_csv('spam.csv')
+
+ # Print the first few rows of the dataframe
+print(data.head())
+
+# Get the general info about the dataframe
+print(data.info())
+
+# Get the number of messages for each category (spam, non-spam)
+print(data['label'].value_counts())
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+
+# Define the features (SMS text) and the target variable (spam or non-spam)
+X = data['v2']
+y = data['v1']
+
+# Vectorize the text data using the CountVectorizer class
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(X)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+from sklearn import svm
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Create an SVM classifier
+model = svm.SVC()
+
+# Train the classifier on the training data
+model.fit(X_train, y_train)
+
+# Make predictions on the testing data
+y_pred = model.predict(X_test)
+
+# Print the confusion matrix and the classification report
+print(confusion_matrix(y_test, y_pred))
+print(classification_report(y_test, y_pred))
